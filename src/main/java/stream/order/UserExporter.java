@@ -3,14 +3,13 @@ package stream.order;
 import java.io.IOException;
 import java.io.Writer;
 
-class UserExporter extends AbstractExporter{
+class UserExportContentWriter{
 	private UserRepo repo;
 
-	UserExporter(UserRepo repo) {
+	UserExportContentWriter(UserRepo repo) {
 		this.repo = repo;
 	}
 	
-	@Override
 	public void writeContent(Writer writer) throws IOException {
 		writer.write("Username\n");
 		repo.findAll().stream()

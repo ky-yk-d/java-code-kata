@@ -6,20 +6,19 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.function.Consumer;
 
-abstract class AbstractExporter {
+class Exporter {
 	
-	public File exportFile(String fileName) throws Exception {
+	public File exportFile(String fileName, Consumer<Writer> contentWriter) throws Exception {
 		File file = new File("../" + fileName);
 		try (Writer writer = new FileWriter(file)){
-			writeContent(writer);
+			contentWriter.accept(writer);
 			return file;
 		} catch (Exception e) {
 			System.err.println("Panic!" + e);
 			throw e;
 		}
 	}
-
-	protected abstract void writeContent(Writer writer) throws IOException;
 	
 }

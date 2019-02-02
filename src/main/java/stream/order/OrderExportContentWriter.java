@@ -3,15 +3,14 @@ package stream.order;
 import java.io.IOException;
 import java.io.Writer;
 
-class OrderExporter extends AbstractExporter {
+class OrderExportContentWriter{
 	
 	private OrderRepo repo;
 	
-	OrderExporter(OrderRepo repo) {
+	OrderExportContentWriter(OrderRepo repo) {
 		this.repo = repo;
 	}
 
-	
 	protected void writeContent(Writer writer) throws IOException {
 		writer.write("ID;Date\n");
 		repo.findByActiveTrue()
