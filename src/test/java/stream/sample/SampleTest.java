@@ -5,7 +5,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,14 +42,19 @@ class SampleTest {
 	class ofとofNullableの仕様の確認{
 
 		@Test
-		void Optionalのof() {
-			Optional<Object> opt = null;
+		void Optionalのofは例外をスローする() {
+			final String helloWorld = "Hello World";
+			Optional<Object> opt = Optional.of(helloWorld);
+			Exception exception = null; // スローされたら格納しておく
 			try {
 				opt = Optional.of(null);
+				fail("Optional.of()はnullを渡すと例外をスローするので到達しないはずのコード");
 			} catch (Exception e) {
+				exception = e;
 				assertEquals(NullPointerException.class, e.getClass());
 			}
-			assertNull(opt);
+			assertEquals(helloWorld, opt.get()); // 当初の値のままである
+			assertNotNull(exception); // 例外がスローされていることを確認
 		}
 
 		@Test
@@ -58,10 +66,38 @@ class SampleTest {
 		}
 
 		@Test
-		void Streamのof() {
-			List<Object> list = Stream.of((Object)null)
-									.collect(Collectors.toList());
+		void Streamのofはnullを含むStreamを返す() {
+			List<Object> list = Stream.of((Object)null).collect(Collectors.toList());
 			assertEquals(1, list.size());
+			assertNull(list.get(0)); // null 1つが入ったListとなっている
+			assertThrows(IndexOutOfBoundsException.class, ()->list.get(1)); //  
+			list.forEach((o)->System.out.println("object:"+ o));
+		}
+		
+		@Test
+		void StreamのofNullableの利用() {
+			List<String> list = Arrays.asList("Kent Beck", "Martin Fowler", "Robert C. Martin");
+			Map<String, Integer> map = new HashMap<String, Integer>(){
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
+				{
+					put("Kent Beck", 1);
+					put("Martin Fowler", 2);
+					put("James O. Coplien", 3);
+				}
+			};
+			// nullを返す可能性のある中間処理をStream.ofNullable()で囲むことで、そのままflatMapに流せる
+			// 要素1つを受け取ってStreamを生成して返す関数を受け取るのがflatMap()
+			// 要素1つからStreamを作るので、map()を使うと、Stream<Stream<E>>となる
+			List<Integer> ofNullable = list.stream().flatMap(str -> Stream.ofNullable(map.get(str))).collect(Collectors.toList());
+			assertEquals(2,ofNullable.size());
+			List<Integer> simple = list.stream().map(str -> map.get(str)).collect(Collectors.toList());
+			assertEquals(3, simple.size());
+			ofNullable.stream().forEach(System.out::println);
+			simple.stream().forEach(System.out::println);
 		}
 
 		@Test
