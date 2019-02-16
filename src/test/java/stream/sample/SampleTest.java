@@ -107,6 +107,63 @@ class SampleTest {
 			assertTrue(list.isEmpty());
 		}
 	}
+	
+	@Nested
+	class Sampleクラスのメソッドのテスト {
+		@Test
+		void stringToIntegerはnull安全() {
+			Integer result = Sample.stringToInteger(null);
+			assertNull(result);
+		}
+		@Test
+		void stringToOptionalIntegerはnull安全() {
+			Optional<Integer> result = Sample.stringToOptionalInteger(null);
+			assertTrue(result.isEmpty());
+		}
+	}
+	
+	@Nested
+	class mapとflatMap {
+		@Test
+		void Optionalのmap() {
+			Optional<String> opt = Optional.of("123");
+			Optional<Integer> result = opt.map(Sample::stringToInteger);
+			System.out.println(result);
+			opt = Optional.of("変換できない文字列");
+			result = opt.map(Sample::stringToInteger);
+			System.out.println(result);
+		}
+		
+		@Test
+		void StreamのofNullableの利用() {
+			List<List<String>> src = List.of(List.of("123","456"), List.of(), List.of("789", "変換できない文字列"));
+			List<Integer> list = src.stream()
+					.flatMap(List::stream)
+					// nullなら空のStream、非nullならStreamに入れて流す
+					.flatMap(str -> Stream.ofNullable(Sample.stringToInteger(str)))
+					.collect(Collectors.toList());
+			list.forEach(System.out::print);
+		}
+		
+		@Test
+		void Optionalのstreamの利用() {
+			List<List<String>> src = List.of(List.of("123","456"), List.of(), List.of("789", "変換できない文字列"));
+			List<Integer> list = src.stream()
+					.flatMap(List::stream)
+					// Optionalが空なら空のStream、空ではないOptionalなら要素をStreamに入れて流す
+					.flatMap(str -> Sample.stringToOptionalInteger(str).stream())
+					.collect(Collectors.toList());
+			list.forEach(System.out::print);
+		}
+		
+		@Test
+		void StreamのflatMap() {
+			List<List<String>> src = List.of(List.of("C言語","Java"), List.of(), List.of("Python", "JavaScript", "Ruby"));
+			List<String> dest = src.stream().flatMap(List::stream).collect(Collectors.toList());
+			dest.forEach(System.out::print);
+			System.out.println();
+		}
+	}
 
 	@Nested
 	class JUnit5の練習{
