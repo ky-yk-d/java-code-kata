@@ -163,6 +163,18 @@ class SampleTest {
 			dest.forEach(System.out::print);
 			System.out.println();
 		}
+		@Test
+		void Streamのmap() {
+			List<String> src = List.of("123","456","","変換できない文字列");
+			// nullも出力する
+			src.stream().map(Sample::stringToInteger)
+				.forEach(System.out::println); 
+			// nullは出力しない（※以下の2つのコードは同じ動きを示す）
+			src.stream().flatMap(el -> Sample.stringToOptionalInteger(el).stream())
+				.forEach(System.out::println);
+			src.stream().flatMap(el -> Stream.ofNullable(Sample.stringToInteger(el)))
+				.forEach(System.out::println);
+		}
 	}
 
 	@Nested
