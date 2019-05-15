@@ -7,8 +7,8 @@ abstract class SimpleList<A> {
 	abstract A head();
 	abstract SimpleList<A> tail();
 	abstract boolean isEmpty();
-	abstract <B> SimpleList<B> map(Function<A, B> mapper);
-	abstract SimpleList<A> filter(Predicate<A> predicate);
+	abstract <B> SimpleList<B> map(Function<? super A, B> mapper);
+	abstract SimpleList<A> filter(Predicate<? super A> predicate);
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

@@ -22,12 +22,12 @@ public class Empty<A> extends SimpleList<A>{
 	}
 
 	@Override
-	<B> SimpleList<B> map(Function<A, B> mapper) {
+	<B> SimpleList<B> map(Function<? super A, B> mapper) {
 		return new Empty<B>();
 	}
 
 	@Override
-	SimpleList<A> filter(Predicate<A> predicate) {
+	SimpleList<A> filter(Predicate<? super A> predicate) {
 		return new Empty<A>();
 	}
 	

@@ -28,7 +28,7 @@ public class Cons<A> extends SimpleList<A> {
 	}
 
 	@Override
-	<B> SimpleList<B> map(Function<A, B> mapper) {
+	<B> SimpleList<B> map(Function<? super A, B> mapper) {
 		B newHead = mapper.apply(this.head);
 		SimpleList<B> newTail = tail.map(mapper);
 		return new Cons<B>(newHead, newTail);
@@ -36,7 +36,7 @@ public class Cons<A> extends SimpleList<A> {
 
 
 	@Override
-	SimpleList<A> filter(Predicate<A> predicate) {
+	SimpleList<A> filter(Predicate<? super A> predicate) {
 		if (predicate.test(this.head)){
 			return new Cons<A>(this.head, this.tail.filter(predicate));
 		}
