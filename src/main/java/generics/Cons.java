@@ -42,5 +42,15 @@ public class Cons<A> extends SimpleList<A> {
 		}
 		return tail.filter(predicate);
 	}
+	
+	@Override
+	SimpleList<A> append(SimpleList<A> other){
+		return new Cons<A>(this.head, this.tail.append(other));
+	}
+
+	@Override
+	<B> SimpleList<B> flatMap(Function<? super A, SimpleList<B>> mapper) {
+		return mapper.apply((this.head)).append(this.tail.flatMap(mapper));
+	}
 
 }

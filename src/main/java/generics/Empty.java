@@ -43,4 +43,14 @@ public class Empty<A> extends SimpleList<A>{
 		}
 		return false;
 	}
+
+	@Override
+	SimpleList<A> append(SimpleList<A> other) {
+		return other;
+	}
+
+	@Override
+	<B> SimpleList<B> flatMap(Function<? super A, SimpleList<B>> mapper) {
+		return new Empty<B>();
+	}
 }
